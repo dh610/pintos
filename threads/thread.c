@@ -28,6 +28,9 @@
    that are ready to run but not actually running. */
 static struct list ready_list;
 
+/* List of processes in THREAD_BLOCKED state because of sleep */
+static struct list timer_list;
+
 /* Idle thread. */
 static struct thread *idle_thread;
 
@@ -108,6 +111,7 @@ thread_init (void) {
 	/* Init the globla thread context */
 	lock_init (&tid_lock);
 	list_init (&ready_list);
+	list_init (&timer_list);
 	list_init (&destruction_req);
 
 	/* Set up a thread structure for the running thread. */
@@ -587,4 +591,36 @@ allocate_tid (void) {
 	lock_release (&tid_lock);
 
 	return tid;
+}
+
+static bool
+timer_less_func (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
+	return list_entry(a, struct thread, elem)->timer < list_entry(b, struct thread, elem)->timer;
+}
+
+void
+thread_sleep (void) {
+	struct thread *t = thread_current();
+	enum intr_level old_level;
+
+	ASSERT(t != idle_thread);
+
+	old_level = intr_disable();
+	list_insert_ordered(&timer_list, &t->elem, timer_less_func, NULL);
+
+	thread_block();
+
+	intr_set_level(old_level);
+}
+
+void
+thread_wakeup (int64_t ticks) {
+	for (struct list_elem *e = list_begin(&timer_list); e != list_end(&timer_list); ) {
+		struct thread *t = list_entry(e, struct thread, elem);
+
+		if (t->timer > ticks) break;
+
+		e = list_remove(e);
+		thread_unblock(t);
+	}
 }
