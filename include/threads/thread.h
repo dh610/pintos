@@ -110,6 +110,9 @@ struct thread {
 	unsigned magic;                     /* Detects stack overflow. */
 };
 
+//for check to need rescheduling
+#define CHECK_PREEMPTIVE !list_empty(&ready_list) && thread_current()->priority < list_entry(list_front(&ready_list), struct thread, elem)->priority
+
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
@@ -146,5 +149,7 @@ void do_iret (struct intr_frame *tf);
 
 void thread_sleep (void);
 void thread_wakeup (int64_t ticks);
+
+bool prio_less_func (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
 
 #endif /* threads/thread.h */

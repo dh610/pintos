@@ -211,6 +211,9 @@ thread_create (const char *name, int priority,
 	/* Add to run queue. */
 	thread_unblock (t);
 
+	if (CHECK_PREEMPTIVE)
+		thread_yield();
+
 	return tid;
 }
 
@@ -244,7 +247,8 @@ thread_unblock (struct thread *t) {
 
 	old_level = intr_disable ();
 	ASSERT (t->status == THREAD_BLOCKED);
-	list_push_back (&ready_list, &t->elem);
+	//list_push_back (&ready_list, &t->elem);
+	list_insert_ordered (&ready_list, &t->elem, prio_less_func, NULL);
 	t->status = THREAD_READY;
 	intr_set_level (old_level);
 }
@@ -307,7 +311,8 @@ thread_yield (void) {
 
 	old_level = intr_disable ();
 	if (curr != idle_thread)
-		list_push_back (&ready_list, &curr->elem);
+		//list_push_back (&ready_list, &curr->elem);
+		list_insert_ordered (&ready_list, &curr->elem, prio_less_func, NULL);
 	do_schedule (THREAD_READY);
 	intr_set_level (old_level);
 }
@@ -316,6 +321,7 @@ thread_yield (void) {
 void
 thread_set_priority (int new_priority) {
 	thread_current ()->priority = new_priority;
+	if (CHECK_PREEMPTIVE) thread_yield();
 }
 
 /* Returns the current thread's priority. */
@@ -594,12 +600,14 @@ allocate_tid (void) {
 }
 
 static bool
-timer_less_func (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
+timer_less_func (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) 
+{
 	return list_entry(a, struct thread, elem)->timer < list_entry(b, struct thread, elem)->timer;
 }
 
 void
-thread_sleep (void) {
+thread_sleep (void) 
+{
 	struct thread *t = thread_current();
 	enum intr_level old_level;
 
@@ -614,7 +622,8 @@ thread_sleep (void) {
 }
 
 void
-thread_wakeup (int64_t ticks) {
+thread_wakeup (int64_t ticks) 
+{
 	for (struct list_elem *e = list_begin(&timer_list); e != list_end(&timer_list); ) {
 		struct thread *t = list_entry(e, struct thread, elem);
 
@@ -623,4 +632,10 @@ thread_wakeup (int64_t ticks) {
 		e = list_remove(e);
 		thread_unblock(t);
 	}
+}
+
+bool
+prio_less_func (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED)
+{
+	return list_entry(a, struct thread, elem)->priority > list_entry(b, struct thread, elem)->priority;
 }
