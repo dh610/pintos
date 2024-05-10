@@ -152,4 +152,6 @@ void thread_wakeup (int64_t ticks);
 
 bool prio_less_func (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
 
+void check_and_yield(void);
+
 #endif /* threads/thread.h */

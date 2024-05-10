@@ -211,8 +211,7 @@ thread_create (const char *name, int priority,
 	/* Add to run queue. */
 	thread_unblock (t);
 
-	if (CHECK_PREEMPTIVE)
-		thread_yield();
+	check_and_yield();
 
 	return tid;
 }
@@ -321,7 +320,7 @@ thread_yield (void) {
 void
 thread_set_priority (int new_priority) {
 	thread_current ()->priority = new_priority;
-	if (CHECK_PREEMPTIVE) thread_yield();
+	check_and_yield();
 }
 
 /* Returns the current thread's priority. */
@@ -638,4 +637,10 @@ bool
 prio_less_func (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED)
 {
 	return list_entry(a, struct thread, elem)->priority > list_entry(b, struct thread, elem)->priority;
+}
+
+void
+check_and_yield(void) {
+	if (CHECK_PREEMPTIVE)
+		thread_yield();
 }

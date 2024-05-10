@@ -66,7 +66,8 @@ sema_down (struct semaphore *sema) {
 
 	old_level = intr_disable ();
 	while (sema->value == 0) {
-		list_push_back (&sema->waiters, &thread_current ()->elem);
+		//list_push_back (&sema->waiters, &thread_current ()->elem);
+		list_insert_ordered (&sema->waiters, &thread_current()->elem, prio_less_func, NULL);
 		thread_block ();
 	}
 	sema->value--;
@@ -102,6 +103,8 @@ sema_try_down (struct semaphore *sema) {
    and wakes up one thread of those waiting for SEMA, if any.
 
    This function may be called from an interrupt handler. */
+
+
 void
 sema_up (struct semaphore *sema) {
 	enum intr_level old_level;
@@ -114,6 +117,8 @@ sema_up (struct semaphore *sema) {
 					struct thread, elem));
 	sema->value++;
 	intr_set_level (old_level);
+
+	check_and_yield();
 }
 
 static void sema_test_helper (void *sema_);
