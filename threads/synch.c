@@ -193,6 +193,19 @@ lock_acquire (struct lock *lock) {
 	ASSERT (!intr_context ());
 	ASSERT (!lock_held_by_current_thread (lock));
 
+	thread_current()->resource = lock;
+
+	if (lock_try_acquire(lock))	return;
+
+	struct thread *t = lock->holder;
+
+	for (int i = 0; i < 8; i++) {
+		t->priority = thread_get_priority();
+		if (t->status == THREAD_RUNNING) break;
+		if (t->resource == NULL) break;
+		t = t->resource->holder;
+	}
+	
 	sema_down (&lock->semaphore);
 	lock->holder = thread_current ();
 }
@@ -227,6 +240,8 @@ lock_release (struct lock *lock) {
 	ASSERT (lock != NULL);
 	ASSERT (lock_held_by_current_thread (lock));
 
+	thread_current()->priority = thread_current()->prio_orig;
+	thread_current()->resource = NULL;
 	lock->holder = NULL;
 	sema_up (&lock->semaphore);
 }

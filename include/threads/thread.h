@@ -5,6 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/interrupt.h"
+#include "threads/synch.h"
 #ifdef VM
 #include "vm/vm.h"
 #endif
@@ -91,7 +92,13 @@ struct thread {
 	enum thread_status status;          /* Thread state. */
 	char name[16];                      /* Name (for debugging purposes). */
 	int priority;                       /* Priority. */
-	int64_t timer;
+
+	/* Alarm clock */
+	int64_t timer;							
+
+	/* priority inversion */
+	int prio_orig;
+	struct lock *resource;
 
 	/* Shared between thread.c and synch.c. */
 	struct list_elem elem;              /* List element. */
