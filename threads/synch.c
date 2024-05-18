@@ -197,25 +197,15 @@ lock_acquire (struct lock *lock) {
 	ASSERT (!lock_held_by_current_thread (lock));
 
 	if (lock_try_acquire(lock)) goto success;
-/*
-	thread_current()->wait_for = lock;
-	
-	lock->holder->priority = thread_get_priority() > lock->holder->priority
-			? thread_get_priority() : lock->holder->priority;
 
-*/
-	struct thread *send = thread_current(), *recv = send;
+	struct thread *send = thread_current(), *recv = lock->holder;
 	
 	send->wait_for = lock;
 
-	do {
-		send = recv;
-		recv = send->wait_for->holder;
-
+	while(1) {
 		if (recv->priority >= send->priority) break;
-
 		recv->priority = send->priority;
-		/*
+
 		for (struct list_elem *e = list_begin(&recv->donation);
 						e != list_end(&recv->donation); e = list_next(e)) {
 			struct thread *t =  list_entry(e, struct thread, don_elem);
@@ -224,15 +214,18 @@ lock_acquire (struct lock *lock) {
 				break;
 			}
 		}
-		
 
-		list_insert_ordered(&recv->donation, &send->don_elem, prio_less_func, NULL);
-		*/
-	} while(!recv->wait_for);
+		list_insert_ordered(&recv->donation, &send->don_elem, prio_less_func_don, NULL);
+
+		send = recv;
+		if (recv->wait_for == NULL) break;
+		recv = recv->wait_for->holder;
+	}
 
 	sema_down (&lock->semaphore);
-success:
 	lock->holder = thread_current ();
+
+success:
 	//list_push_back(&thread_current()->resource, &lock->elem);
 	thread_current()->wait_for = NULL;
 }
@@ -266,39 +259,20 @@ void
 lock_release (struct lock *lock) {
 	ASSERT (lock != NULL);
 	ASSERT (lock_held_by_current_thread (lock));
-/*	
-	list_remove(&lock->elem);
 
-	if (thread_get_priority() > thread_current()->prio_orig) {
-		thread_current()->priority = thread_current()->prio_orig;
+	struct thread *curr = thread_current(), *next = NULL;
+	int prio = 0;
 
-		for (struct list_elem *e = list_begin(&thread_current()->resource);
-						e != list_end(&thread_current()->resource); e = list_next(e)) {
-			struct lock *tmp = list_entry(e, struct lock, elem);
-			
-			if (list_empty(&tmp->semaphore.waiters)) continue;
+	if (!list_empty(&lock->semaphore.waiters)) {
+		next = list_entry(list_front(&lock->semaphore.waiters), struct thread, elem);
 
-			struct thread *t = list_entry(list_head(&tmp->semaphore.waiters), struct thread, elem);
-			thread_current()->priority = t->priority > thread_get_priority() ?
-							t->priority : thread_get_priority();
-		}
+		if (next->priority > curr->prio_orig)
+			list_remove(&next->don_elem);
 	}
-*/
-
-	struct thread *curr = thread_current(), *t;
-
-	for (struct list_elem *e = list_begin(&curr->donation);
-					e != list_end(&curr->donation); e = list_next(e)) {
-			t = list_entry(e, struct thread, don_elem);
-		if (t->wait_for == lock) {
-			list_remove(e);
-			break;
-		}
-
-		t = list_entry(list_front(&curr->donation), struct thread, don_elem);
-
-		curr->priority = t->priority > curr->prio_orig ? t->priority : curr->prio_orig;
-	}
+	
+	if (!list_empty(&curr->donation))
+		prio = list_entry(list_front(&curr->donation), struct thread, don_elem)->priority;
+	curr->priority = prio > curr->prio_orig ? prio : curr->prio_orig;
 
 	lock->holder = NULL;
 	sema_up (&lock->semaphore);
@@ -398,4 +372,10 @@ cond_broadcast (struct condition *cond, struct lock *lock) {
 
 	while (!list_empty (&cond->waiters))
 		cond_signal (cond, lock);
+}
+
+bool
+prio_less_func_don (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED)
+{
+	return list_entry(a, struct thread, don_elem)->priority > list_entry(b, struct thread, don_elem)->priority;
 }

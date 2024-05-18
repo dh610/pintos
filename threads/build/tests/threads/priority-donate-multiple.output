@@ -15,19 +15,20 @@ Calibrating timer...  209,510,400 loops/s.
 Boot complete.
 Executing 'priority-donate-multiple':
 (priority-donate-multiple) begin
-Interrupt 0x0e (#PF Page-Fault Exception) at rip=8004209ee2
- cr2=0000000000000000 error=               0
-rax 0000000000000000 rbx 0000000000000000 rcx 0000000000000000 rdx 0000000000000020
-rsp 0000008004234f80 rbp 0000008004234fa0 rsi 0000008004000f00 rdi 0000000000000001
-rip 0000008004209ee2 r8 0000000000000000  r9 0000000000000000 r10 0000000000000000
-r11 0000000000000000 r12 0000000000000000 r13 0000000000000000 r14 0000000000000000
-r15 0000000000000000 rflags 00000246
-es: 0010 ds: 0010 cs: 0008 ss: 0010
-Kernel PANIC at ../../threads/interrupt.c:361 in intr_handler(): Unexpected interrupt
-Call stack: 0x800421366f 0x8004208a38 0x8004208de9 0x8004217fb2 0x80042071d7.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 21 ticks
-Thread: 0 idle ticks, 21 kernel ticks, 0 user ticks
-Console: 1
+(priority-donate-multiple) Main thread should have priority 32.  Actual priority: 32.
+(priority-donate-multiple) Main thread should have priority 33.  Actual priority: 33.
+(priority-donate-multiple) Thread b acquired lock b.
+(priority-donate-multiple) Thread b finished.
+(priority-donate-multiple) Thread b should have just finished.
+(priority-donate-multiple) Main thread should have priority 32.  Actual priority: 32.
+(priority-donate-multiple) Thread a acquired lock a.
+(priority-donate-multiple) Thread a finished.
+(priority-donate-multiple) Thread a should have just finished.
+(priority-donate-multiple) Main thread should have priority 31.  Actual priority: 31.
+(priority-donate-multiple) end
+Execution of 'priority-donate-multiple' complete.
+Timer: 23 ticks
+Thread: 0 idle ticks, 23 kernel ticks, 0 user ticks
+Console: 1145 characters output
+Keyboard: 0 keys pressed
+Powering off...

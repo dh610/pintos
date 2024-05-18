@@ -5,14 +5,14 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk..Kernel command line: -q run priority-donate-multiple2
-Kernel PANIC at ../../threads/thread.c:562 in schedule(): assertion `is_thread (next)' failed.
-Call stack: 0x8004213766 0x8004207790 0x8004206d00 0x8004209a20 0x800420a00f 0x8004207883 0x800420697f 0x8004206068.
+Booting from Hard Disk..Kernel command line: -q run priority-donate-one
+Kernel PANIC at ../../lib/kernel/list.c:270 in list_front(): assertion `!list_empty (list)' failed.
+Call stack: 0x800421374e 0x80042140b0 0x800420a1cf 0x80042078b7 0x800420697f 0x8004206068.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
 Timer: 0 ticks
 Thread: 0 idle ticks, 0 kernel ticks, 0 user ticks
-Console: 486 characters output
+Console: 459 characters output
 Keyboard: 0 keys pressed
 Powering off...
