@@ -5,7 +5,8 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk..Kernel command line: -q run alarm-simultaneous
+Booting from Hard Disk...
+Kernel command line: -q run alarm-simultaneous
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -36,7 +37,7 @@ Executing 'alarm-simultaneous':
 (alarm-simultaneous) end
 Execution of 'alarm-simultaneous' complete.
 Timer: 278 ticks
-Thread: 249 idle ticks, 29 kernel ticks, 0 user ticks
+Thread: 250 idle ticks, 28 kernel ticks, 0 user ticks
 Console: 1655 characters output
 Keyboard: 0 keys pressed
 Powering off...

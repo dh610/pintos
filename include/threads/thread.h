@@ -98,7 +98,11 @@ struct thread {
 
 	/* priority inversion */
 	int prio_orig;
-	struct lock *resource;
+	struct list resource;
+	struct lock *wait_for;
+
+	struct list donation;
+	struct list_elem don_elem;
 
 	/* Shared between thread.c and synch.c. */
 	struct list_elem elem;              /* List element. */
