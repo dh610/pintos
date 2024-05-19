@@ -202,20 +202,26 @@ lock_acquire (struct lock *lock) {
 	
 	send->wait_for = lock;
 
+	bool activate = true;
+
 	while(1) {
 		if (recv->priority >= send->priority) break;
 		recv->priority = send->priority;
 
-		for (struct list_elem *e = list_begin(&recv->donation);
-						e != list_end(&recv->donation); e = list_next(e)) {
-			struct thread *t =  list_entry(e, struct thread, don_elem);
-			if (t->wait_for == lock) {
-				list_remove(e);
-				break;
+		if (activate) {
+			for (struct list_elem *e = list_begin(&recv->donation);
+							e != list_end(&recv->donation); e = list_next(e)) {
+				struct thread *t =  list_entry(e, struct thread, don_elem);
+				if (t->wait_for == lock) {
+					list_remove(e);
+					break;
+				}
 			}
-		}
 
-		list_insert_ordered(&recv->donation, &send->don_elem, prio_less_func_don, NULL);
+			list_insert_ordered(&recv->donation, &send->don_elem, prio_less_func_don, NULL);
+
+			activate = false;
+		}
 
 		send = recv;
 		if (recv->wait_for == NULL) break;
