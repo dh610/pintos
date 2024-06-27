@@ -427,6 +427,8 @@ init_thread (struct thread *t, const char *name, int priority) {
 	list_init(&t->resource);
 	list_init(&t->donation);
 	t->wait_for = NULL;
+
+	list_init(&t->children);
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should

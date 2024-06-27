@@ -7,6 +7,7 @@
 #include "userprog/gdt.h"
 #include "threads/flags.h"
 #include "intrinsic.h"
+#include "threads/init.h"
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -23,6 +24,21 @@ void syscall_handler (struct intr_frame *);
 #define MSR_STAR 0xc0000081         /* Segment selector msr */
 #define MSR_LSTAR 0xc0000082        /* Long mode SYSCALL target */
 #define MSR_SYSCALL_MASK 0xc0000084 /* Mask for the eflags */
+
+static void halt (void) NO_RETURN;
+static void exit (int status) NO_RETURN;
+static tid_t fork (const char *thread_name, struct intr_frame *f);
+static int exec (const char *file);
+static int wait (pid_t);
+static bool create (const char *file, unsigned initial_size);
+static bool remove (const char *file);
+static int open (const char *file);
+static int filesize (int fd);
+static int read (int fd, void *buffer, unsigned length);
+static int write (int fd, const void *buffer, unsigned length);
+static void seek (int fd, unsigned position);
+static unsigned tell (int fd);
+static void close (int fd);
 
 void
 syscall_init (void) {
@@ -41,6 +57,46 @@ syscall_init (void) {
 void
 syscall_handler (struct intr_frame *f UNUSED) {
 	// TODO: Your implementation goes here.
-	printf ("system call!\n");
+	switch (f->R.rax) {
+		case SYS_HALT:
+			halt();
+			break;
+		case SYS_EXIT:
+			exit(f->R.rdi);
+			break;
+		case SYS_FORK:
+			fork(f->R.rdi, f);
+			break;
+		case SYS_exec:
+			exec(f->R.rdi);
+			break;
+		case SYS_WAIT:
+			wait(f->R.rdi);
+			break;
+	}
 	thread_exit ();
+}
+
+static void
+halt (void)
+{
+	power_off();
+}
+
+static void
+exit (int status)
+{
+}
+
+static tid_t fork (const char *thread_name, struct intr_frame *f)
+{
+	return process_fork(thread_name, f);
+}
+
+static int exec (const char *file)
+{
+}
+
+static int wait (pid_t)
+{
 }

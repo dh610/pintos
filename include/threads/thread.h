@@ -110,6 +110,13 @@ struct thread {
 #ifdef USERPROG
 	/* Owned by userprog/process.c. */
 	uint64_t *pml4;                     /* Page map level 4 */
+	tid_t ptid;			    /* tid of parent */
+	struct list children;		    /* list of child thread */
+	struct list_elem child_elem;	    /* list element of children list */
+
+	struct intr_frame *sys_if;	    /* for SYS_FORK */
+	struct file *fd_table[64];	    /* file descriptor table (start at 3) */
+	int fd_end;
 #endif
 #ifdef VM
 	/* Table for whole virtual memory owned by thread. */
