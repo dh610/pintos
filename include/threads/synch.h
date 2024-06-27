@@ -31,6 +31,7 @@ void lock_release (struct lock *);
 bool lock_held_by_current_thread (const struct lock *);
 
 bool prio_less_func_don (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
+bool prio_less_func_cond (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
 
 /* Condition variable. */
 struct condition {

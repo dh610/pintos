@@ -24,6 +24,7 @@
 
 static void process_cleanup (void);
 static bool load (const char *file_name, struct intr_frame *if_);
+static bool argument_passing (char *argv[], int argc, struct intr_frame *if_);
 static void initd (void *f_name);
 static void __do_fork (void *);
 
@@ -165,6 +166,15 @@ process_exec (void *f_name) {
 	char *file_name = f_name;
 	bool success;
 
+	/* tokenize file name */
+	char *argv[64];
+	int argc = 0;
+	char *token, *save_ptr;
+
+	for (token = strtok_r (file_name, " ", &save_ptr); token != NULL;
+			token = strtok_r (NULL, " ", &save_ptr))
+		argv[argc++] = token;
+
 	/* We cannot use the intr_frame in the thread structure.
 	 * This is because when current thread rescheduled,
 	 * it stores the execution information to the member. */
@@ -178,6 +188,9 @@ process_exec (void *f_name) {
 
 	/* And then load the binary */
 	success = load (file_name, &_if);
+
+	/* project 2: argument pasing */
+	argument_passing(argv, argc, &_if);
 
 	/* If load failed, quit. */
 	palloc_free_page (file_name);
@@ -204,6 +217,7 @@ process_wait (tid_t child_tid UNUSED) {
 	/* XXX: Hint) The pintos exit if process_wait (initd), we recommend you
 	 * XXX:       to add infinite loop here before
 	 * XXX:       implementing the process_wait. */
+	while(1);
 	return -1;
 }
 
@@ -425,6 +439,39 @@ done:
 	return success;
 }
 
+static bool
+argument_passing (char *argv[], int argc, struct intr_frame *if_)
+{
+	/* copy argument */
+	for (int i = argc - 1; i >= 0; i--)
+	{
+		int len = (int) strlen(argv[i]) + 1;
+		if_->rsp -= len;
+		memcpy((void *) if_->rsp, (void *) argv[i], len);
+		argv[i] = (char *)if_->rsp;
+	}
+
+	/* word-align */
+	int align = if_->rsp % 8;
+	if_->rsp -= align;
+	memset((void *) if_->rsp, 0, align);
+
+	/* set null pointer at end */
+	if_->rsp -= 8;
+	memset((void *) if_->rsp, 0, 8);
+
+	/* save pointer addr */
+	if_->rsp -= 8 * argc;
+	memcpy((void *) if_->rsp, (void *) argv, 8 * argc);
+
+	/* save final state */
+	if_->R.rdi = argc;
+	if_->R.rsi = if_->rsp;
+
+	/* return address */
+	if_->rsp -= 8;
+	memset((void *) if_->rsp, 0, 8);
+}
 
 /* Checks whether PHDR describes a valid, loadable segment in
  * FILE and returns true if so, false otherwise. */

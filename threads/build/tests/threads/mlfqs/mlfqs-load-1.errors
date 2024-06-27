@@ -1,8 +1,8 @@
 qemu-system-x86_64: terminating on signal 2
 Traceback (most recent call last):
-  File "/home/ydh/pintos-kaist/utils/pintos", line 220, in <module>
+  File "/home/ydh/pintos/utils/pintos", line 220, in <module>
     Pintos(ttest=args.threads_tests, mem=args.memory, no_vga=args.no_vga,
-  File "/home/ydh/pintos-kaist/utils/pintos", line 166, in run
+  File "/home/ydh/pintos/utils/pintos", line 166, in run
     subprocess.run(cmd, **args)
   File "/usr/lib/python3.9/subprocess.py", line 507, in run
     stdout, stderr = process.communicate(input, timeout=timeout)

@@ -14,13 +14,13 @@
 #include "tests/userprog/boundary.h"
 #include "tests/userprog/sample.inc"
 
-const char *test_name = "dup2-simple";
-
 int
 main (int argc UNUSED, char *argv[] UNUSED) {
   char *buffer;
   int byte_cnt = 0;
   int fd1, fd2 = 0x1CE;
+
+  test_name = "dup2-simple";
 
   close (0);
   CHECK ((fd1 = open ("sample.txt")) > -1, "open \"sample.txt\"");

@@ -14,8 +14,6 @@
 #include "tests/userprog/boundary.h"
 #include "tests/userprog/sample.inc"
 
-const char *test_name = "dup2-complex";
-
 char magic[] = {
   "Pintos is funny\n"
 };
@@ -25,6 +23,7 @@ main (int argc UNUSED, char *argv[] UNUSED) {
   char *buffer;
   int byte_cnt = 0;
   int fd1, fd2, fd3 = 0x1CE, fd4 = 0x1CE - 0xC0FFEE, fd5, fd6;
+  test_name = "dup2-complex";
 
   close (0);
 

@@ -10,13 +10,12 @@
 #include <syscall.h>
 #include "tests/lib.h"
 
-const char *test_name = "child-rox";
-
 static void
 try_write (void) 
 {
   int handle;
   char buffer[19];
+  test_name = "child-rox";
 
   quiet = true;
   CHECK ((handle = open ("child-rox")) > 1, "open \"child-rox\"");
