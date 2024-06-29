@@ -110,13 +110,22 @@ struct thread {
 #ifdef USERPROG
 	/* Owned by userprog/process.c. */
 	uint64_t *pml4;                     /* Page map level 4 */
-	tid_t ptid;			    /* tid of parent */
+
+	struct thread *parent;		    /* parent thread */
 	struct list children;		    /* list of child thread */
 	struct list_elem child_elem;	    /* list element of children list */
 
-	struct intr_frame *sys_if;	    /* for SYS_FORK */
-	struct file *fd_table[64];	    /* file descriptor table (start at 3) */
-	int fd_end;
+	struct intr_frame *sys_if;	    /* system call interrupt frame */
+
+	struct file *fd_table[128];	    /* file descriptor table (start at 2) */
+	int fd_end;			    /* final index of file descriptor */
+
+	struct semaphore forking;	    /* semaphore for fork */
+
+	struct semaphore wait_sema;	    /* waiters of semaphore are wait this thread */
+	struct semaphore exit_sema;	    /* use for exit-wait */
+	int exit_status;		    /* receive return status */
+	int wait_cnt;			    /* count of wait for this thread */
 #endif
 #ifdef VM
 	/* Table for whole virtual memory owned by thread. */

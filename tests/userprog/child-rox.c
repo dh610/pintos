@@ -15,7 +15,6 @@ try_write (void)
 {
   int handle;
   char buffer[19];
-  test_name = "child-rox";
 
   quiet = true;
   CHECK ((handle = open ("child-rox")) > 1, "open \"child-rox\"");
@@ -30,6 +29,7 @@ try_write (void)
 int
 main (int argc UNUSED, char *argv[]) 
 {
+  test_name = "child-rox";
   msg ("begin");
   try_write ();
 

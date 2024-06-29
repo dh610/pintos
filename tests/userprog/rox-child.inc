@@ -26,6 +26,9 @@ test_main (void)
     exec (child_cmd);
   }
 
+  if (child == 0)
+    exec (child_cmd);
+
   if (child < 0)
     fail ("fork() returned %d", child);
   quiet = true;
