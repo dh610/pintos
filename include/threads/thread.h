@@ -126,6 +126,7 @@ struct thread {
 	struct semaphore exit_sema;	    /* use for exit-wait */
 	int exit_status;		    /* receive return status */
 	int wait_cnt;			    /* count of wait for this thread */
+	struct file *exec_file;
 #endif
 #ifdef VM
 	/* Table for whole virtual memory owned by thread. */

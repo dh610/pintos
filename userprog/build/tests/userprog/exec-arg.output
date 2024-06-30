@@ -5,8 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...
-Kernel command line: -q -f put exec-arg put child-args run exec-arg
+Booting from Hard Disk..Kernel command line: -q -f put exec-arg put child-args run exec-arg
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -33,12 +32,12 @@ Executing 'exec-arg':
 (args) end
 exec-arg: exit(0)
 Execution of 'exec-arg' complete.
-Timer: 105 ticks
-Thread: 59 idle ticks, 41 kernel ticks, 5 user ticks
+Timer: 94 ticks
+Thread: 52 idle ticks, 37 kernel ticks, 6 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 160 reads, 528 writes
 hd1:0: 245 reads, 0 writes
-Console: 1079 characters output
+Console: 1078 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

@@ -5,8 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...
-Kernel command line: -q -f put bad-read run bad-read
+Booting from Hard Disk..Kernel command line: -q -f put bad-read run bad-read
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -25,8 +24,8 @@ Executing 'bad-read':
 (bad-read) begin
 bad-read: exit(-1)
 Execution of 'bad-read' complete.
-Timer: 84 ticks
-Thread: 46 idle ticks, 35 kernel ticks, 3 user ticks
+Timer: 83 ticks
+Thread: 43 idle ticks, 39 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 83 reads, 274 writes
 hd1:0: 123 reads, 0 writes

@@ -5,7 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...Kernel command line: -q -f put exec-boundary put child-simple run exec-boundary
+Booting from Hard Disk..Kernel command line: -q -f put exec-boundary put child-simple run exec-boundary
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -30,12 +30,12 @@ child-simple: exit(81)
 (exec-boundary) end
 exec-boundary: exit(0)
 Execution of 'exec-boundary' complete.
-Timer: 101 ticks
-Thread: 51 idle ticks, 44 kernel ticks, 6 user ticks
+Timer: 99 ticks
+Thread: 47 idle ticks, 43 kernel ticks, 9 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 159 reads, 534 writes
 hd1:0: 248 reads, 0 writes
-Console: 1075 characters output
+Console: 1074 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

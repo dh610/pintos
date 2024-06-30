@@ -5,8 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...
-Kernel command line: -q -f put syn-write put child-syn-wrt run syn-write
+Booting from Hard Disk..Kernel command line: -q -f put syn-write put child-syn-wrt run syn-write
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -60,8 +59,8 @@ child-syn-wrt: exit(3)
 (syn-write) end
 syn-write: exit(0)
 Execution of 'syn-write' complete.
-Timer: 141 ticks
-Thread: 63 idle ticks, 55 kernel ticks, 23 user ticks
+Timer: 144 ticks
+Thread: 68 idle ticks, 51 kernel ticks, 25 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 741 reads, 590 writes
 hd1:0: 260 reads, 0 writes

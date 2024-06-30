@@ -5,7 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...Kernel command line: -q -f put args-many run 'args-many a b c d e f g h i j k l m n o p q r s t u v'
+Booting from Hard Disk...Kernel command line: -q -f put args-many run 'args-many a b c d e f g h i j k l m n o p q r s t u v'
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -51,7 +51,7 @@ Executing 'args-many a b c d e f g h i j k l m n o p q r s t u v':
 args-many: exit(0)
 Execution of 'args-many a b c d e f g h i j k l m n o p q r s t u v' complete.
 Timer: 88 ticks
-Thread: 43 idle ticks, 38 kernel ticks, 7 user ticks
+Thread: 38 idle ticks, 42 kernel ticks, 8 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 83 reads, 272 writes
 hd1:0: 122 reads, 0 writes

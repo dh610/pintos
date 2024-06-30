@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/ydh/pintos/utils/pintos", line 220, in <module>
+    Pintos(ttest=args.threads_tests, mem=args.memory, no_vga=args.no_vga,
+  File "/home/ydh/pintos/utils/pintos", line 166, in run
+    subprocess.run(cmd, **args)
+  File "/usr/lib/python3.9/subprocess.py", line 507, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File "/usr/lib/python3.9/subprocess.py", line 1134, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/usr/lib/python3.9/subprocess.py", line 2007, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+  File "/usr/lib/python3.9/subprocess.py", line 1189, in wait
+    return self._wait(timeout=timeout)
+  File "/usr/lib/python3.9/subprocess.py", line 1913, in _wait
+    time.sleep(delay)
+KeyboardInterrupt

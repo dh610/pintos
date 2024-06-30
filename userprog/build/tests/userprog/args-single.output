@@ -5,8 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...
-Kernel command line: -q -f put args-single run 'args-single onearg'
+Booting from Hard Disk..Kernel command line: -q -f put args-single run 'args-single onearg'
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -30,8 +29,8 @@ Executing 'args-single onearg':
 (args) end
 args-single: exit(0)
 Execution of 'args-single onearg' complete.
-Timer: 85 ticks
-Thread: 52 idle ticks, 31 kernel ticks, 2 user ticks
+Timer: 87 ticks
+Thread: 48 idle ticks, 33 kernel ticks, 6 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 83 reads, 272 writes
 hd1:0: 122 reads, 0 writes

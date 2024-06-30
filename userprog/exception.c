@@ -147,12 +147,13 @@ page_fault (struct intr_frame *f) {
 	/* For project 3 and later. */
 	if (vm_try_handle_fault (f, fault_addr, user, write, not_present))
 		return;
-#else
-	/* Only for project 2 */
+#endif
+
 	thread_current()->exit_status = -1;
 	printf("%s: exit(-1)\n", thread_name());
 	thread_exit();
-#endif
+
+kernel_fault:
 
 	/* Count page faults. */
 	page_fault_cnt++;

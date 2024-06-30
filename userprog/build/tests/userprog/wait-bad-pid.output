@@ -5,8 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...
-Kernel command line: -q -f put wait-bad-pid run wait-bad-pid
+Booting from Hard Disk..Kernel command line: -q -f put wait-bad-pid run wait-bad-pid
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -26,8 +25,8 @@ Executing 'wait-bad-pid':
 (wait-bad-pid) end
 wait-bad-pid: exit(0)
 Execution of 'wait-bad-pid' complete.
-Timer: 77 ticks
-Thread: 42 idle ticks, 32 kernel ticks, 3 user ticks
+Timer: 85 ticks
+Thread: 43 idle ticks, 39 kernel ticks, 3 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 82 reads, 274 writes
 hd1:0: 123 reads, 0 writes

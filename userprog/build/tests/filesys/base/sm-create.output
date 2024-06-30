@@ -5,8 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...
-Kernel command line: -q -f put sm-create run sm-create
+Booting from Hard Disk...Kernel command line: -q -f put sm-create run sm-create
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -31,7 +30,7 @@ Executing 'sm-create':
 sm-create: exit(0)
 Execution of 'sm-create' complete.
 Timer: 84 ticks
-Thread: 45 idle ticks, 34 kernel ticks, 5 user ticks
+Thread: 41 idle ticks, 35 kernel ticks, 8 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 122 reads, 304 writes
 hd1:0: 126 reads, 0 writes

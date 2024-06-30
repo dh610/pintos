@@ -61,8 +61,8 @@ child-rox: exit(12)
 (rox-multichild) end
 rox-multichild: exit(0)
 Execution of 'rox-multichild' complete.
-Timer: 125 ticks
-Thread: 61 idle ticks, 41 kernel ticks, 23 user ticks
+Timer: 133 ticks
+Thread: 72 idle ticks, 47 kernel ticks, 14 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 418 reads, 554 writes
 hd1:0: 257 reads, 0 writes

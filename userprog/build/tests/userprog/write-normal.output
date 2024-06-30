@@ -5,7 +5,7 @@ iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0138F4C0+012CF4C0 CA00
 Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
 
 
-Booting from Hard Disk...Kernel command line: -q -f put write-normal put sample.txt run write-normal
+Booting from Hard Disk..Kernel command line: -q -f put write-normal put sample.txt run write-normal
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -28,8 +28,8 @@ Executing 'write-normal':
 (write-normal) end
 write-normal: exit(0)
 Execution of 'write-normal' complete.
-Timer: 92 ticks
-Thread: 53 idle ticks, 34 kernel ticks, 5 user ticks
+Timer: 85 ticks
+Thread: 44 idle ticks, 37 kernel ticks, 5 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 140 reads, 312 writes
 hd1:0: 130 reads, 0 writes

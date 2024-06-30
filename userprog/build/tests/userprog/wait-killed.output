@@ -31,11 +31,11 @@ child-bad: exit(-1)
 wait-killed: exit(0)
 Execution of 'wait-killed' complete.
 Timer: 109 ticks
-Thread: 62 idle ticks, 40 kernel ticks, 7 user ticks
+Thread: 50 idle ticks, 48 kernel ticks, 11 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 177 reads, 530 writes
 hd1:0: 246 reads, 0 writes
-Console: 1065 characters output
+Console: 1066 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

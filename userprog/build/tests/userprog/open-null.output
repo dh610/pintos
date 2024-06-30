@@ -24,8 +24,8 @@ Executing 'open-null':
 (open-null) begin
 open-null: exit(-1)
 Execution of 'open-null' complete.
-Timer: 84 ticks
-Thread: 46 idle ticks, 35 kernel ticks, 3 user ticks
+Timer: 83 ticks
+Thread: 42 idle ticks, 38 kernel ticks, 4 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 82 reads, 274 writes
 hd1:0: 123 reads, 0 writes

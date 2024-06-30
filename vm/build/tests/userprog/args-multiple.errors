@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/ydh/pintos/utils/pintos", line 220, in <module>
+    Pintos(ttest=args.threads_tests, mem=args.memory, no_vga=args.no_vga,
+  File "/home/ydh/pintos/utils/pintos", line 166, in run
+    subprocess.run(cmd, **args)
+  File "/usr/lib/python3.9/subprocess.py", line 505, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/usr/lib/python3.9/subprocess.py", line 951, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.9/subprocess.py", line 1756, in _execute_child
+    self.pid = _posixsubprocess.fork_exec(
+KeyboardInterrupt
+qemu-system-x86_64: -drive file=/tmp/tmpad0bc9jv.dsk,format=raw,index=0,media=disk: Could not open '/tmp/tmpad0bc9jv.dsk': No such file or directory

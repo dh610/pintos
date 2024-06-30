@@ -192,8 +192,10 @@ open (char *file) {
 
 	int fd;
 
+	/*
 	if (strcmp(thread_name(), file) == 0)
 		file_deny_write(fp);
+	*/
 
 	for (fd = 2; fd < curr->fd_end; fd++)
 		if (!curr->fd_table[fd]) break;
