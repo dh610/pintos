@@ -7,6 +7,7 @@
 #include "filesys/inode.h"
 #include "filesys/directory.h"
 #include "devices/disk.h"
+#include "filesys/fat.h"
 
 /* The disk that contains the file system. */
 struct disk *filesys_disk;
@@ -23,7 +24,7 @@ filesys_init (bool format) {
 
 	inode_init ();
 
-#ifdef EFILESYS
+#ifdef FILESYS
 	fat_init ();
 
 	if (format)
@@ -46,7 +47,7 @@ filesys_init (bool format) {
 void
 filesys_done (void) {
 	/* Original FS */
-#ifdef EFILESYS
+#ifdef FILESYS
 	fat_close ();
 #else
 	free_map_close ();
@@ -61,12 +62,22 @@ bool
 filesys_create (const char *name, off_t initial_size) {
 	disk_sector_t inode_sector = 0;
 	struct dir *dir = dir_open_root ();
+#ifndef FILESYS
 	bool success = (dir != NULL
 			&& free_map_allocate (1, &inode_sector)
-			&& inode_create (inode_sector, initial_size)
+			&& inode_create (inode_sector, initial_size, false)
 			&& dir_add (dir, name, inode_sector));
 	if (!success && inode_sector != 0)
 		free_map_release (inode_sector, 1);
+#else
+	cluster_t clst = fat_create_chain (0);
+	if (dir == NULL || clst == 0) return false;
+	inode_sector = cluster_to_sector (clst);
+	bool success = (inode_create (inode_sector, initial_size, false)
+			&& dir_add (dir, name, inode_sector));
+	if (!success && inode_sector != 0)
+		fat_remove_chain (clst, 0);
+#endif
 	dir_close (dir);
 
 	return success;

@@ -5,7 +5,9 @@
 #include <string.h>
 #include "filesys/filesys.h"
 #include "filesys/free-map.h"
+#include "filesys/fat.h"
 #include "threads/malloc.h"
+#include <stdio.h>
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
@@ -16,7 +18,9 @@ struct inode_disk {
 	disk_sector_t start;                /* First data sector. */
 	off_t length;                       /* File size in bytes. */
 	unsigned magic;                     /* Magic number. */
-	uint32_t unused[125];               /* Not used. */
+	uint8_t unused[499];                /* Not used. */
+
+	bool isdir;			    /* File is directory or not */
 };
 
 /* Returns the number of sectors to allocate for an inode SIZE
@@ -43,8 +47,20 @@ struct inode {
 static disk_sector_t
 byte_to_sector (const struct inode *inode, off_t pos) {
 	ASSERT (inode != NULL);
-	if (pos < inode->data.length)
+	if (pos < inode->data.length) {
+#ifndef FILESYS
 		return inode->data.start + pos / DISK_SECTOR_SIZE;
+#else
+		cluster_t clst = sector_to_cluster (inode->data.start);
+
+		for (int i = 0; i < pos / DISK_SECTOR_SIZE; i++) {
+			clst = fat_get(clst);
+			if (clst == 0) return -1;
+		}
+
+		return cluster_to_sector(clst);
+#endif
+	}
 	else
 		return -1;
 }
@@ -65,7 +81,7 @@ inode_init (void) {
  * Returns true if successful.
  * Returns false if memory or disk allocation fails. */
 bool
-inode_create (disk_sector_t sector, off_t length) {
+inode_create (disk_sector_t sector, off_t length, bool isdir UNUSED) {
 	struct inode_disk *disk_inode = NULL;
 	bool success = false;
 
@@ -80,6 +96,28 @@ inode_create (disk_sector_t sector, off_t length) {
 		size_t sectors = bytes_to_sectors (length);
 		disk_inode->length = length;
 		disk_inode->magic = INODE_MAGIC;
+#ifdef FILESYS
+		cluster_t clst = sector_to_cluster(sector);
+
+		disk_inode->isdir = isdir;
+		fat_put (clst, EOChain);
+
+		clst = fat_create_chain (0);
+		disk_inode->start = cluster_to_sector (clst);
+
+		if (disk_inode->start != 0) {
+			disk_write(filesys_disk, sector, disk_inode);
+			if (sectors > 0) {
+				static char zeros[DISK_SECTOR_SIZE];
+
+				for (size_t i = 0; i < sectors; i++) {
+					clst = fat_create_chain (clst);
+					disk_write (filesys_disk, cluster_to_sector (clst), zeros);
+				}
+			}
+			success = true;
+		}
+#else
 		if (free_map_allocate (sectors, &disk_inode->start)) {
 			disk_write (filesys_disk, sector, disk_inode);
 			if (sectors > 0) {
@@ -91,6 +129,7 @@ inode_create (disk_sector_t sector, off_t length) {
 			}
 			success = true; 
 		} 
+#endif
 		free (disk_inode);
 	}
 	return success;
@@ -157,12 +196,19 @@ inode_close (struct inode *inode) {
 		/* Remove from inode list and release lock. */
 		list_remove (&inode->elem);
 
+#ifndef FILESYS
 		/* Deallocate blocks if removed. */
 		if (inode->removed) {
 			free_map_release (inode->sector, 1);
 			free_map_release (inode->data.start,
 					bytes_to_sectors (inode->data.length)); 
 		}
+#else
+		if (inode->removed) {
+			fat_remove_chain (sector_to_cluster (inode->sector), 0);
+			fat_remove_chain (sector_to_cluster (inode->data.start), 0);
+		}
+#endif
 
 		free (inode); 
 	}
@@ -225,6 +271,29 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset) {
 	return bytes_read;
 }
 
+static bool
+inode_extend (struct inode *inode, disk_sector_t sectors) {
+	cluster_t clst, clusters = sectors / SECTORS_PER_CLUSTER;
+
+	/* Find cluster that end of chain */
+	for (clst = sector_to_cluster(inode->data.start);
+			fat_get(clst) != EOChain; clst = fat_get(clst));
+
+	/* Extend chain */
+	for (unsigned i = 0; i < clusters; i++) {
+		clst = fat_create_chain (clst);
+		if (clst == EOChain)
+			return false;
+	}
+
+	/* Update new size in on-disk inode */
+	struct inode_disk *disk_inode = &inode->data;
+	disk_inode->length += sectors * DISK_SECTOR_SIZE;
+	disk_write (filesys_disk, inode->sector, disk_inode);
+
+	return true;
+}
+
 /* Writes SIZE bytes from BUFFER into INODE, starting at OFFSET.
  * Returns the number of bytes actually written, which may be
  * less than SIZE if end of file is reached or an error occurs.
@@ -239,6 +308,12 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
 
 	if (inode->deny_write_cnt)
 		return 0;
+
+#ifdef FILESYS
+	int oversize = size + offset - inode_length (inode);
+	if (oversize > 0)
+		inode_extend (inode, bytes_to_sectors (oversize));
+#endif
 
 	while (size > 0) {
 		/* Sector to write, starting byte offset within sector. */

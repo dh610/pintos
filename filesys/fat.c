@@ -5,6 +5,8 @@
 #include "threads/synch.h"
 #include <stdio.h>
 #include <string.h>
+#include <bitmap.h>
+#include "filesys/inode.h"
 
 /* Should be less than DISK_SECTOR_SIZE */
 struct fat_boot {
@@ -27,6 +29,7 @@ struct fat_fs {
 };
 
 static struct fat_fs *fat_fs;
+static struct bitmap *fat_bitmap;
 
 void fat_boot_create (void);
 void fat_fs_init (void);
@@ -125,14 +128,18 @@ fat_create (void) {
 		PANIC ("FAT creation failed");
 
 	// Set up ROOT_DIR_CLST
-	fat_put (ROOT_DIR_CLUSTER, EOChain);
+	//fat_put (ROOT_DIR_CLUSTER, EOChain);
 
 	// Fill up ROOT_DIR_CLUSTER region with 0
+	/*
 	uint8_t *buf = calloc (1, DISK_SECTOR_SIZE);
 	if (buf == NULL)
 		PANIC ("FAT create failed due to OOM");
+
 	disk_write (filesys_disk, cluster_to_sector (ROOT_DIR_CLUSTER), buf);
 	free (buf);
+	*/
+	inode_create (cluster_to_sector (ROOT_DIR_CLUSTER), DISK_SECTOR_SIZE, true);
 }
 
 void
@@ -153,6 +160,10 @@ fat_boot_create (void) {
 void
 fat_fs_init (void) {
 	/* TODO: Your code goes here. */
+	fat_fs->fat_length = fat_fs->bs.total_sectors / fat_fs->bs.sectors_per_cluster;
+	fat_fs->data_start = fat_fs->bs.fat_start + fat_fs->bs.fat_sectors;
+	if (fat_bitmap) free(fat_bitmap);
+	fat_bitmap = bitmap_create(fat_fs->fat_length);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -165,6 +176,15 @@ fat_fs_init (void) {
 cluster_t
 fat_create_chain (cluster_t clst) {
 	/* TODO: Your code goes here. */
+	cluster_t new_clst = bitmap_scan_and_flip (fat_bitmap, 0, 1, false) + 1; 
+
+	if (new_clst == BITMAP_ERROR)
+		return 0;
+
+	fat_put (new_clst, EOChain);
+	if (clst) fat_put(clst, new_clst);
+
+	return new_clst;
 }
 
 /* Remove the chain of clusters starting from CLST.
@@ -172,22 +192,44 @@ fat_create_chain (cluster_t clst) {
 void
 fat_remove_chain (cluster_t clst, cluster_t pclst) {
 	/* TODO: Your code goes here. */
+	for (cluster_t nclst = fat_get(clst);
+			clst != EOChain; clst = nclst, nclst = fat_get (nclst))
+		bitmap_set (fat_bitmap, clst - 1, false);
+	
+	if (pclst) fat_put(pclst, EOChain);
 }
 
 /* Update a value in the FAT table. */
 void
 fat_put (cluster_t clst, cluster_t val) {
 	/* TODO: Your code goes here. */
+	int clstidx = clst - 1;
+	if (!bitmap_test (fat_bitmap, clstidx))
+		bitmap_mark (fat_bitmap, clstidx);
+	fat_fs->fat[clstidx] = val;	// Store cluster number, not cluster index
 }
 
 /* Fetch a value in the FAT table. */
 cluster_t
 fat_get (cluster_t clst) {
 	/* TODO: Your code goes here. */
+	int clstidx = clst - 1;
+	if (clst > fat_fs->fat_length || !bitmap_test (fat_bitmap, clstidx))
+		return 0;
+	return (cluster_t) fat_fs->fat[clstidx];
 }
 
 /* Covert a cluster # to a sector number. */
 disk_sector_t
 cluster_to_sector (cluster_t clst) {
 	/* TODO: Your code goes here. */
+	int clstidx = clst - 1;
+	return fat_fs->data_start + clstidx * fat_fs->bs.sectors_per_cluster;
+}
+
+/* Convert a sector # to a cluster number. */
+cluster_t
+sector_to_cluster (disk_sector_t sector) {
+	ASSERT (sector >= fat_fs->data_start);
+	return (sector - fat_fs->data_start) / fat_fs->bs.sectors_per_cluster + 1;
 }

@@ -9,6 +9,9 @@
 #ifdef VM
 #include "vm/vm.h"
 #endif
+#ifdef FILESYS
+#include "filesys/directory.h"
+#endif
 
 
 /* States in a thread's life cycle. */
@@ -128,9 +131,14 @@ struct thread {
 	int wait_cnt;			    /* count of wait for this thread */
 	struct file *exec_file;
 #endif
+
 #ifdef VM
 	/* Table for whole virtual memory owned by thread. */
 	struct supplemental_page_table spt;
+#endif
+
+#ifdef FILESYS
+	struct dir *pwd;
 #endif
 
 	/* Owned by thread.c. */
